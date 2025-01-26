@@ -1,4 +1,4 @@
-package com.example.composewithbottomnavbar.presentation
+package com.example.composewithbottomnavbar.presentation.widget
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -13,14 +13,20 @@ import com.example.composewithbottomnavbar.presentation.screens.ProfileScreen
 import com.example.composewithbottomnavbar.presentation.screens.SettingsScreen
 
 @Composable
-fun App(innerPadding: PaddingValues, navController: NavHostController) {
+fun App(
+    innerPadding: PaddingValues,
+    navController: NavHostController,
+    onBackSettingsScreen: () -> Unit,
+    onBackProfileScreen: () -> Unit,
+    onSettingsClick: () -> Unit
+) {
     NavHost(
         navController,
         startDestination = Destinations.HomeScreen,
         Modifier.padding(innerPadding)
     ) {
-        composable<Destinations.HomeScreen> { HomeScreen(onSettingsClick = {}) }
-        composable<Destinations.ProfileScreen> { ProfileScreen() }
-        composable<Destinations.SettingsScreen> { SettingsScreen() }
+        composable<Destinations.HomeScreen> { HomeScreen(onSettingsClick = onSettingsClick) }
+        composable<Destinations.ProfileScreen> { ProfileScreen(onBackProfileScreen) }
+        composable<Destinations.SettingsScreen> { SettingsScreen(onBackSettingsScreen) }
     }
 }

@@ -5,43 +5,60 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.composewithbottomnavbar.domain.TopLevelRoutes
 import com.example.composewithbottomnavbar.presentation.theme.ComposeWithBottomNavBarTheme
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val navController = rememberNavController()
             ComposeWithBottomNavBarTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                Scaffold(modifier = Modifier.fillMaxSize(),
+                    bottomBar = {
+                        NavigationBar {
+                            val navBackStackEntry by navController.currentBackStackEntryAsState()
+                            val currentDestination = navBackStackEntry?.destination
+                            TopLevelRoutes.routes.forEach { topLevelRoute ->
+                                val isSelected =
+                                    currentDestination?.route == topLevelRoute.route.toString()
+                                NavigationBarItem(
+                                    icon = {
+                                        Icon(
+                                            topLevelRoute.icon,
+                                            contentDescription = topLevelRoute.name
+                                        )
+                                    },
+                                    label = { Text(topLevelRoute.name) },
+                                    selected = isSelected,
+                                    onClick = {
+                                        navController.navigate(topLevelRoute.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }) { innerPadding ->
+                    App(innerPadding, navController)
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ComposeWithBottomNavBarTheme {
-        Greeting("Android")
     }
 }

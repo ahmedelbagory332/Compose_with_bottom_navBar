@@ -16,8 +16,6 @@ import com.example.composewithbottomnavbar.presentation.screens.SettingsScreen
 fun App(
     innerPadding: PaddingValues,
     navController: NavHostController,
-    onBackSettingsScreen: () -> Unit,
-    onBackProfileScreen: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
     NavHost(
@@ -26,7 +24,7 @@ fun App(
         Modifier.padding(innerPadding)
     ) {
         composable<Destinations.HomeScreen> { HomeScreen(onSettingsClick = onSettingsClick) }
-        composable<Destinations.ProfileScreen> { ProfileScreen(onBackProfileScreen) }
-        composable<Destinations.SettingsScreen> { SettingsScreen(onBackSettingsScreen) }
+        composable<Destinations.ProfileScreen> { ProfileScreen() }
+        composable<Destinations.SettingsScreen> { SettingsScreen() }
     }
 }
